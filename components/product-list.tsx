@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Button from "./button";
 import { useFormState } from "react-dom";
+import { useEffect, useRef } from "react";
 
 interface ProductListProps {
   initialProducts: InitialProducts;
@@ -16,6 +17,21 @@ export default function ProductList({ initialProducts }: ProductListProps) {
     page: 0,
     isLastPage: false,
   });
+  const trigger = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (
+        entries: IntersectionObserverEntry[],
+        observer: IntersectionObserver
+      ) => {
+        if (entries[0].isIntersecting && !state.isLastPage) {
+          action();
+        }
+      }
+    );
+    if (trigger.current) observer.observe(trigger.current);
+    return () => observer.disconnect();
+  }, [state.isLastPage, action]);
   return (
     <>
       {state.products.map((product) => (
@@ -44,12 +60,15 @@ export default function ProductList({ initialProducts }: ProductListProps) {
           <div className="border-b m-3 border-neutral-600" />
         </Link>
       ))}
-      <form action={action} className="mb-24 items-center flex justify-center">
-        {state.isLastPage ? (
-          <div className="p-5">더 이상 상품이 없습니다.</div>
-        ) : (
-          <Button text="더보기"></Button>
-        )}
+
+      <form action={action} className="mb-28 items-center flex justify-center ">
+        <div ref={trigger}>
+          {state.isLastPage ? (
+            <div className="p-5">더 이상 상품이 없습니다.</div>
+          ) : (
+            <div className="h-10 w-96 rounded-full bg-neutral-800" />
+          )}
+        </div>
       </form>
     </>
   );

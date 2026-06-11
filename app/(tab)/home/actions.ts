@@ -15,7 +15,7 @@ export async function getProducts() {
     orderBy: {
       created_at: "desc",
     },
-    take: 1,
+    take: 4,
   });
   return products;
 }
@@ -39,8 +39,8 @@ export async function getMoreProducts(prevState: PrevStateProps) {
     orderBy: {
       created_at: "desc",
     },
-    take: 1,
-    skip: nextPage * 1,
+    take: 4,
+    skip: nextPage * 4,
   });
 
   return {
