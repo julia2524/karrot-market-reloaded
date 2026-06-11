@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int        @id @default(autoincrement())
+  email      String?    @unique
+  username   String     @unique
+  password   String?
+  avatar     String?
+  phone      String?    @unique
+  github_id  Int?       @unique
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  smstokens  SMStoken[]
+  products   Product[]
+}
+
+model SMStoken {
+  id         Int      @id @default(autoincrement())
+  token      Int      @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  photo       String
+  title       String
+  price       Float
+  description String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+}
