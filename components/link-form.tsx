@@ -2,7 +2,6 @@ import Link from "next/link";
 
 interface LinkFormProps {
   link: string;
-
   children: React.ReactNode;
 }
 

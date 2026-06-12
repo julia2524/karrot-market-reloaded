@@ -1,6 +1,6 @@
 "use client";
 import { getMoreProducts, InitialProducts } from "@/app/(tab)/home/actions";
-import { formatToAgo, formmaToOne } from "@/lib/utils";
+import { formatToAgo, formatToOne } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "./button";
@@ -53,7 +53,7 @@ export default function ProductList({ initialProducts }: ProductListProps) {
                 {formatToAgo(product.created_at.toString())}
               </div>
               <div className="font-semibold text-lg text-white">
-                {formmaToOne(product.price)}원
+                {formatToOne(product.price)}원
               </div>
             </div>
           </div>

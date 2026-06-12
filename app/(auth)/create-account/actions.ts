@@ -80,7 +80,7 @@ export default async function createAccount(
   _prevState: any,
   formData: FormData
 ) {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  //await new Promise((resolve) => setTimeout(resolve, 2000));
   const data = {
     username: formData.get("username"),
     email: formData.get("email"),

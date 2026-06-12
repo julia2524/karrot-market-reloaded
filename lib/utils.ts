@@ -1,4 +1,4 @@
-export function formmaToOne(price: number): string {
+export function formatToOne(price: number): string {
   return price.toLocaleString("ko-KR");
 }
 

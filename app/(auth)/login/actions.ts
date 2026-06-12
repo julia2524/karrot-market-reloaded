@@ -12,7 +12,7 @@ const formSchema = z.object({
 });
 
 export default async function login(_prevState: any, formData: FormData) {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
   const data = {
     email: formData.get("email"),
     password: formData.get("password"),
