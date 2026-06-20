@@ -3,14 +3,26 @@
 import Header from "@/components/header";
 import Input from "@/components/input";
 import { CameraIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { useFormState } from "react-dom";
+//import { useFormState } from "react-dom";
 import addProduct from "./actions";
 import Button from "@/components/button";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { productFormSchema, ProductFormType } from "./schema";
 
 export default function AddProduct() {
-  const [state, action] = useFormState(addProduct, null);
+  //const [state, action] = useFormState(addProduct, null);
   const [preview, setPreview] = useState("");
+  //const [file, setFile] = useState<File | null>(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm({
+    resolver: zodResolver(productFormSchema),
+  });
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
@@ -31,11 +43,24 @@ export default function AddProduct() {
 
     const url = URL.createObjectURL(file);
     setPreview(url);
+    // setFile(file);
+    setValue("photo", file);
+    console.log(file);
   };
+  const onValid = handleSubmit(async (data: ProductFormType) => {
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("photo", data.photo);
+    formData.append("description", data.description);
+    formData.append("price", String(data.price));
+    console.log(formData);
+    await addProduct(formData);
+  });
+
   return (
     <div className="">
       <Header link="/home" icon={XMarkIcon} header="올리기" />
-      <form action={action}>
+      <form onSubmit={onValid}>
         <label
           className="aspect-square relative border rounded-md m-5 flex flex-col justify-center items-center"
           htmlFor="photo"
@@ -63,23 +88,25 @@ export default function AddProduct() {
 
         <div className="flex flex-col gap-3 p-5 ">
           <Input
-            name="title"
+            {...register("title")}
             placeholder="제목을 입력해주세요."
-            errors={state?.fieldErrors.title ?? []}
+            errors={errors.title?.message ? [errors.title.message] : []}
             type="text"
             required
           />
           <Input
-            name="description"
+            {...register("description")}
             placeholder="구매 시기, 사용감(흠집, 파손 여부) 등 설명을 최대한 자세히 적어주세요. "
-            errors={state?.fieldErrors.description ?? []}
+            errors={
+              errors.description?.message ? [errors.description.message] : []
+            }
             type="text"
             required
           />
           <Input
-            name="price"
+            {...register("price")}
             placeholder="가격을 입력해주세요."
-            errors={state?.fieldErrors.price ?? []}
+            errors={errors.price?.message ? [errors.price.message] : []}
             type="text"
             required
           />

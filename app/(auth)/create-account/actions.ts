@@ -4,7 +4,7 @@ import db from "@/lib/db";
 import { redirect } from "next/navigation";
 import z from "zod";
 import bcrypt from "bcrypt";
-import { createLoginSession, getSession } from "@/lib/session";
+import { createLoginSession } from "@/lib/session";
 
 const passwordRegex = new RegExp(
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*?[#?!@$%^&*-]).+$/

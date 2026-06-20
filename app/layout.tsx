@@ -8,8 +8,8 @@ const notoSansKr = Noto_Sans_KR({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Karrot Market",
-    default: "Karrot Market",
+    template: "%s | 당근마켓",
+    default: "당근마켓",
   },
   description: "Sell and buy all the things!",
 };

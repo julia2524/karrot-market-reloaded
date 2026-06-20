@@ -3,7 +3,6 @@ import { getMoreProducts, InitialProducts } from "@/app/(tab)/home/actions";
 import { formatToAgo, formatToOne } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import Button from "./button";
 import { useFormState } from "react-dom";
 import { useEffect, useRef } from "react";
 

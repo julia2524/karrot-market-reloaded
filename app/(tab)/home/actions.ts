@@ -1,10 +1,10 @@
 "use server";
 import db from "@/lib/db";
 import { Prisma } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 
-export async function getProducts() {
-  //await new Promise((resolve) => setTimeout(resolve, 10000));
-  const products = await db.product.findMany({
+async function getInitProducts() {
+  return await db.product.findMany({
     select: {
       id: true,
       photo: true,
@@ -17,7 +17,17 @@ export async function getProducts() {
     },
     take: 4,
   });
-  return products;
+}
+
+const getCachedInitProducts = unstable_cache(
+  getInitProducts,
+  ["initialProducts"],
+  { tags: ["initialProducts"], revalidate: 60 }
+);
+
+export async function getProducts() {
+  //await new Promise((resolve) => setTimeout(resolve, 10000));
+  return await getCachedInitProducts();
 }
 
 export type InitialProducts = Prisma.PromiseReturnType<typeof getProducts>;
