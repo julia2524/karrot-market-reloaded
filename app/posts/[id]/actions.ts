@@ -1,9 +1,10 @@
 "use server";
 
+import { CommentState } from "@/components/add-comment";
 import db from "@/lib/db";
 import { Prisma } from "@prisma/client";
 import { revalidateTag, unstable_cache } from "next/cache";
-import { cookies } from "next/headers";
+import z from "zod";
 
 export async function getPost(id: number) {
   return await db.post.findUnique({
@@ -15,11 +16,6 @@ export async function getPost(id: number) {
       title: true,
       description: true,
       views: true,
-      _count: {
-        select: {
-          comments: true,
-        },
-      },
       user: {
         select: {
           avatar: true,
@@ -82,7 +78,6 @@ export async function getIsLike(userId: number, postId: number) {
   return Boolean(isLike);
 }
 export const onLike = async (postId: number, userId: number) => {
-  console.log("postId: ", postId), console.log("userId: ", userId);
   await db.like.create({
     data: {
       userId,
@@ -93,7 +88,6 @@ export const onLike = async (postId: number, userId: number) => {
 };
 
 export const onDisLike = async (postId: number, userId: number) => {
-  console.log("postId: ", postId), console.log("userId: ", userId);
   await db.like.delete({
     where: {
       id: {
@@ -104,3 +98,73 @@ export const onDisLike = async (postId: number, userId: number) => {
   });
   revalidateTag(`post-like-${postId}`);
 };
+
+export async function getComments(id: number) {
+  return await db.comment.findMany({
+    where: {
+      postId: id,
+    },
+    include: {
+      user: {
+        select: {
+          username: true,
+          avatar: true,
+        },
+      },
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+}
+
+const getCachedComments = (id: number) =>
+  unstable_cache(() => getComments(id), [`comments-${id}`], {
+    tags: [`comments-${id}`],
+  })();
+
+export async function getCommentsByCache(id: number) {
+  return await getCachedComments(id);
+}
+
+export type CommentsType = Prisma.PromiseReturnType<typeof getCommentsByCache>;
+const commentSchema = z
+  .string()
+  .min(1, "댓글은 1~200자 사이로 작성해주세요.")
+  .max(200, "댓글은 1~200자 사이로 작성해주세요.");
+
+export async function addComment(
+  postId: number,
+  userId: number,
+  _prevState: CommentState,
+  formData: FormData
+) {
+  const comment = formData.get("comment");
+  const result = await commentSchema.safeParseAsync(comment);
+  if (!result.success) {
+    return {
+      error: result.error.flatten(),
+      success: false,
+    };
+  } else {
+    await db.comment.create({
+      data: {
+        payload: result.data,
+        user: {
+          connect: { id: userId },
+        },
+        post: {
+          connect: {
+            id: postId,
+          },
+        },
+      },
+    });
+    revalidateTag(`comments-${postId}`);
+    revalidateTag("initialPosts");
+  }
+  return {
+    error: null,
+    success: true,
+  };
+}

@@ -3,15 +3,16 @@ import Header from "@/components/header";
 import UserIconBox from "@/components/user-icon";
 import { ChevronLeftIcon, EyeIcon } from "@heroicons/react/24/solid";
 import {
+  getCommentsByCache,
   getIsLike,
   getLikeByCache,
   getPostByCache,
-  incrementPostViews,
 } from "./actions";
 import { notFound, redirect } from "next/navigation";
 import LikeButton from "@/components/like-button";
 import { getSession } from "@/lib/session";
 import ViewTracker from "@/components/view-tracker";
+import CommentSection from "@/components/comment-section";
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const post = await getPostByCache(Number(params.id));
@@ -35,35 +36,45 @@ export default async function Post({ params }: { params: { id: string } }) {
   }
   const isLike = await getIsLike(session.id!, id);
   const likes = await getLikeByCache(id);
-  console.log("likes: ", likes);
+
+  const initialComments = await getCommentsByCache(id);
 
   return (
-    <div className="flex flex-col gap-7">
+    <div className="">
       <ViewTracker id={id} />
       <Header link="/life" icon={ChevronLeftIcon} header="" />
-      <UserIconBox
-        photo={post?.user.avatar ?? ""}
-        username={post?.user.username}
-        created_at={post?.created_at}
-      />
-      <div className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <h1 className="font-bold text-2xl">{post.title}</h1>
-          <p className="">{post.description}</p>
-        </div>
-        <div className="flex flex-row  gap-1 *:text-neutral-500">
-          <EyeIcon className="size-5" />
-          <span className="text-sm font-semibold">조회 {post.views}</span>
-        </div>
-        <LikeButton
-          likeCount={likes ? likes._count.likes : 0}
-          postId={id}
-          userId={session.id!}
-          isLike={isLike}
+      <div className="flex flex-col gap-7 p-5">
+        <UserIconBox
+          photo={post?.user.avatar ?? ""}
+          username={post?.user.username}
+          created_at={post?.created_at}
         />
-      </div>
-      <div>
-        <h3 className="font-semibold">댓글 {post._count.comments}</h3>
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
+            <h1 className="font-bold text-2xl">{post.title}</h1>
+            <p className="">{post.description}</p>
+          </div>
+          <div className="flex flex-row  gap-1 *:text-neutral-500">
+            <EyeIcon className="size-5" />
+            <span className="text-sm font-semibold">조회 {post.views}</span>
+          </div>
+          <LikeButton
+            likeCount={likes ? likes._count.likes : 0}
+            postId={id}
+            userId={session.id!}
+            isLike={isLike}
+          />
+        </div>
+
+        <div className="flex flex-col gap-5">
+          <CommentSection
+            username={post?.user.username}
+            avatar={post?.user.avatar ?? ""}
+            initialComments={initialComments}
+            postId={id}
+            userId={session.id!}
+          />
+        </div>
       </div>
     </div>
   );

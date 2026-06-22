@@ -2,6 +2,7 @@
 
 import { onDisLike, onLike } from "@/app/posts/[id]/actions";
 import { HandThumbUpIcon } from "@heroicons/react/24/solid";
+import { useOptimistic } from "react";
 
 interface LikeProps {
   likeCount: number;
@@ -15,20 +16,33 @@ export default function LikeButton({
   userId,
   isLike,
 }: LikeProps) {
-  const onDisLikeWithId = onDisLike.bind(null, postId, userId);
-  const onLikeWithId = onLike.bind(null, postId, userId);
+  const [state, reducer] = useOptimistic(
+    { isLike, likeCount },
+    (prev, payload: unknown) => ({
+      isLike: !prev.isLike,
+      likeCount: prev.isLike ? prev.likeCount - 1 : prev.likeCount + 1,
+    })
+  );
+  const action = async () => {
+    reducer(null);
+    if (state.isLike) {
+      await onDisLike(postId, userId);
+    } else {
+      await onLike(postId, userId);
+    }
+  };
   return (
-    <form action={isLike ? onDisLikeWithId : onLikeWithId}>
+    <form action={action}>
       <button
         className={`flex gap-2  border self-start rounded-full p-2 items-center justify-center transition-colors ${
-          isLike
+          state.isLike
             ? "bg-orange-500 hover:bg-orange-400 *:text-white border-transparent"
             : "hover:bg-neutral-800  border-neutral-500  *:text-neutral-500 "
         }`}
       >
         <HandThumbUpIcon className="size-6 " />
         <span className="">
-          {isLike ? likeCount : `공감하기 (${likeCount})`}
+          {state.isLike ? state.likeCount : `공감하기 (${state.likeCount})`}
         </span>
       </button>
     </form>

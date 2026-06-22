@@ -3,7 +3,7 @@ import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 
 interface UserIconProps {
-  photo: string;
+  photo: string | null;
   username: string;
   created_at: Date;
 }
@@ -30,7 +30,7 @@ export default function UserIconBox({
       </div>
       <div className="">
         <div className="text-sm font-bold">{username}</div>
-        <div className="text-sm">{formatToAgo(created_at.toString())}</div>
+        <div className="text-xs">{formatToAgo(created_at.toString())}</div>
       </div>
     </div>
   );
