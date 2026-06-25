@@ -8,14 +8,14 @@ import { productFormSchema } from "./schema";
 import { revalidateTag } from "next/cache";
 
 export default async function addProduct(formData: FormData) {
-  console.log("formData: ", formData);
+  //  console.log("formData: ", formData);
   const data = {
     photo: formData.get("photo"),
     title: formData.get("title"),
     description: formData.get("description"),
     price: formData.get("price"),
   };
-  console.log("data: ", data);
+  //console.log("data: ", data);
   const result = await productFormSchema.safeParseAsync(data);
   if (!result.success) {
     return result.error.flatten();

@@ -51,7 +51,7 @@ export default function EditForm({ product, productId }: EditProps) {
     if (!files || files.length === 0) return;
 
     const file = files[0];
-    console.log();
+
     if (!file.type.startsWith("image/")) {
       alert("이미지 파일만 올려주세요!");
       return;
@@ -65,7 +65,7 @@ export default function EditForm({ product, productId }: EditProps) {
     setPreview(url);
     // setFile(file);
     setValue("photo", file);
-    console.log(file);
+    // console.log(file);
   };
   const onValid = handleSubmit(async (data: ProductEditFormType) => {
     const formData = new FormData();
@@ -73,7 +73,7 @@ export default function EditForm({ product, productId }: EditProps) {
     formData.append("photo", data.photo ?? product.photo);
     formData.append("description", data.description);
     formData.append("price", String(data.price));
-    console.log(formData);
+    // console.log(formData);
     await editProduct(productId, formData);
   });
   return (

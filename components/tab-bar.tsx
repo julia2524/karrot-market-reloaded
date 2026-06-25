@@ -37,8 +37,8 @@ export default function TabBar() {
         )}
         <span>동네생활</span>
       </Link>
-      <Link href="/chats">
-        {pathname === "/chats" ? (
+      <Link href="/chat">
+        {pathname === "/chat" ? (
           <ChatSolidIcon className="size-8" />
         ) : (
           <ChatOutlineIcon className="size-8" />

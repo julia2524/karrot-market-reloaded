@@ -4,8 +4,9 @@ import Header from "@/components/header";
 import Input from "@/components/input";
 import SocialLogin from "@/components/social-login";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { useFormState } from "react-dom";
+
 import createAccount from "./actions";
+import { useFormState } from "react-dom";
 
 export default function CreateAccount() {
   const [state, action] = useFormState(createAccount, null);

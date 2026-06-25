@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 import { getAccessToken, getGithubEmail, getGithubProfile } from "./github";
 
 export async function GET(request: NextRequest) {
-  console.log("들어옴!");
+  //console.log("들어옴!");
   const code = request.nextUrl.searchParams.get("code");
   if (!code) {
     return new Response(null, { status: 400 });

@@ -9,7 +9,7 @@ export default async function EditProduct({
   const productId = Number(params.id);
   const getProductDetail = await getProduct(productId);
   if (!getProductDetail) return;
-  console.log(getProductDetail);
+  // console.log(getProductDetail);
 
   return <EditForm product={getProductDetail} productId={productId} />;
 }

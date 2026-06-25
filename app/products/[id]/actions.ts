@@ -3,7 +3,7 @@ import db from "@/lib/db";
 import { deleteProductImage } from "@/lib/r2";
 import { getSession } from "@/lib/session";
 import { Prisma } from "@prisma/client";
-import { revalidateTag, unstable_cache } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function getProduct(id: number) {
@@ -72,4 +72,31 @@ export async function deleteProduct(id: number) {
   revalidateTag("initialProducts");
   revalidateTag(`product-${id}`);
   redirect("/home");
+}
+
+export async function getOrCreateChatRoom(
+  sellerId: number,
+  buyerId: number,
+  productId: number
+) {
+  const room = await db.chatRoom.findFirst({
+    where: {
+      productId,
+      sellerId,
+      buyerId,
+    },
+    select: { id: true },
+  });
+  if (room) return room.id;
+
+  const newRoom = await db.chatRoom.create({
+    data: {
+      productId,
+      sellerId,
+      buyerId,
+    },
+    select: { id: true },
+  });
+  revalidatePath("/chat");
+  return newRoom.id;
 }

@@ -30,7 +30,7 @@ export default function AddProduct() {
     if (!files || files.length === 0) return;
 
     const file = files[0];
-    console.log();
+    //console.log();
     if (!file.type.startsWith("image/")) {
       alert("이미지 파일만 올려주세요!");
       return;
@@ -45,7 +45,7 @@ export default function AddProduct() {
     setPreview(url);
     // setFile(file);
     setValue("photo", file);
-    console.log(file);
+    // console.log(file);
   };
   const onValid = handleSubmit(async (data: ProductFormType) => {
     const formData = new FormData();
@@ -53,12 +53,12 @@ export default function AddProduct() {
     formData.append("photo", data.photo);
     formData.append("description", data.description);
     formData.append("price", String(data.price));
-    console.log(formData);
+    // console.log(formData);
     await addProduct(formData);
   });
 
   return (
-    <div className="">
+    <div className="flex flex-col h-screen p-5">
       <Header link="/home" icon={XMarkIcon} header="올리기" />
       <form onSubmit={onValid}>
         <label

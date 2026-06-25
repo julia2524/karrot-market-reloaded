@@ -23,3 +23,12 @@ export function formatToAgo(date: string): string {
   }
   return "방금 전";
 }
+
+export function formatToDate(date: Date): string {
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
+export function formatToTime(date: Date): string {
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours} : ${minutes}`;
+}

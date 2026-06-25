@@ -11,14 +11,14 @@ export default async function editProduct(
   productId: number,
   formData: FormData
 ) {
-  console.log("formData: ", formData);
+  // console.log("formData: ", formData);
   const data = {
     photo: formData.get("photo"),
     title: formData.get("title"),
     description: formData.get("description"),
     price: formData.get("price"),
   };
-  console.log("data: ", data);
+  // console.log("data: ", data);
   const result = await productEditFormSchema.safeParseAsync(data);
   if (!result.success) {
     return result.error.flatten();
@@ -32,7 +32,7 @@ export default async function editProduct(
   const photoFile = result.data.photo;
 
   if (photoFile instanceof File && photoFile.size > 0) {
-    console.log(photoFile);
+    // console.log(photoFile);
     photoUrl = await uploadProductImage(photoFile);
   } else if (typeof photoFile === "string") {
     photoUrl = photoFile;

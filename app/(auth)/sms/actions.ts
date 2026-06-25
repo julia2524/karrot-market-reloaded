@@ -55,7 +55,7 @@ export default async function smsLogin(
         },
       });
       const newToken = await getToken();
-      console.log(newToken);
+      // console.log(newToken);
       const user = await db.sMStoken.create({
         data: {
           token: newToken,
@@ -75,7 +75,7 @@ export default async function smsLogin(
           user: true,
         },
       });
-      console.log(user);
+      //   console.log(user);
       return { token: true };
     }
   } else {

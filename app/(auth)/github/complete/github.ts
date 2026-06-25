@@ -13,7 +13,7 @@ export async function getAccessToken(code: string) {
     method: "POST",
     headers: { Accept: "application/json" },
   });
-  console.log("토큰함수실행!");
+  // console.log("토큰함수실행!");
   if (!response.ok) {
     return null;
   }

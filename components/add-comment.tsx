@@ -3,8 +3,7 @@
 import { useFormState } from "react-dom";
 import Input from "./input";
 import { addComment, CommentsType } from "@/app/posts/[id]/actions";
-import { useEffect, useRef } from "react";
-import { success } from "zod";
+import { useRef } from "react";
 
 export type CommentType = CommentsType[number];
 interface AddCommentProps {
@@ -51,12 +50,6 @@ export default function AddComment({
     return addComment(postId, userId, prevState, formData);
   };
   const [state, action] = useFormState(addCommentWithId, null);
-
-  // useEffect(() => {
-  //   if (state?.success) {
-  //     formRef.current?.reset();
-  //   }
-  // }, [state]);
 
   return (
     <form ref={formRef} action={action} className="">

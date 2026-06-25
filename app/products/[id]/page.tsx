@@ -1,5 +1,9 @@
 import { redirect } from "next/navigation";
-import { deleteProduct, getProductByCache } from "./actions";
+import {
+  deleteProduct,
+  getOrCreateChatRoom,
+  getProductByCache,
+} from "./actions";
 import Header from "@/components/header";
 import { ChevronLeftIcon, UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
@@ -19,9 +23,16 @@ export default async function Product({ params }: { params: { id: string } }) {
   if (isNaN(paramsId)) redirect("/home");
   const product = await getProductByCache(paramsId);
   if (!product) return <div>상품을 찾을 수 없습니다.</div>;
-  const session = await getSession();
-  const owner = product.user;
   const deleteProductWithId = deleteProduct.bind(null, product.id);
+  const session = await getSession();
+
+  const owner = product.user; //판매자
+  const sellerId = owner.id; //판매자..
+  const isSeller = session.id === sellerId;
+
+  const chatRoomId = !isSeller
+    ? await getOrCreateChatRoom(sellerId, session.id, product.id)
+    : null;
   return (
     <div className="flex flex-col h-screen">
       <Header link="/home" icon={ChevronLeftIcon} header="" />
@@ -61,7 +72,7 @@ export default async function Product({ params }: { params: { id: string } }) {
       </div>
 
       <footer className="flex flex-row justify-between px-5 py-5  mx-auto w-full max-w-screen-sm font-semibold bg-neutral-800 fixed bottom-0 ">
-        {session.id === owner.id ? (
+        {isSeller ? (
           <div className="flex flex-row gap-2 ">
             <LinkForm link={`/products/${params.id}/edit`}>
               <span>게시물 수정</span>
@@ -73,8 +84,8 @@ export default async function Product({ params }: { params: { id: string } }) {
         ) : (
           <div />
         )}
-        <LinkForm link="/chats">
-          <span>{session.id === owner.id ? "대화중인 채팅" : "채팅하기"}</span>
+        <LinkForm link={isSeller ? "/chat" : `/chats/${chatRoomId}`}>
+          <span>{isSeller ? "대화중인 채팅" : "채팅하기"}</span>
         </LinkForm>
       </footer>
     </div>

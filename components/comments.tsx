@@ -7,7 +7,7 @@ interface CommentsProps {
 
 export default function Comments({ comments }: CommentsProps) {
   if (!comments) return;
-  console.log(comments);
+  // console.log(comments);
 
   return (
     <div className="flex flex-col gap-4">
