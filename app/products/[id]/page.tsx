@@ -25,13 +25,15 @@ export default async function Product({ params }: { params: { id: string } }) {
   if (!product) return <div>상품을 찾을 수 없습니다.</div>;
   const deleteProductWithId = deleteProduct.bind(null, product.id);
   const session = await getSession();
-
+  if (!session) {
+    redirect("/login");
+  }
   const owner = product.user; //판매자
   const sellerId = owner.id; //판매자..
   const isSeller = session.id === sellerId;
 
   const chatRoomId = !isSeller
-    ? await getOrCreateChatRoom(sellerId, session.id, product.id)
+    ? await getOrCreateChatRoom(sellerId, session.id!, product.id)
     : null;
   return (
     <div className="flex flex-col h-screen">

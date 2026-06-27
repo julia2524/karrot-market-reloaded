@@ -1,0 +1,20 @@
+-- CreateTable
+CREATE TABLE "Streaming" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "title" TEXT NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Streaming_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "LiveComments" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "payload" TEXT NOT NULL,
+    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" DATETIME NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "streamingId" INTEGER NOT NULL,
+    CONSTRAINT "LiveComments_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "LiveComments_streamingId_fkey" FOREIGN KEY ("streamingId") REFERENCES "Streaming" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);

@@ -13,6 +13,7 @@ import LikeButton from "@/components/like-button";
 import { getSession } from "@/lib/session";
 import ViewTracker from "@/components/view-tracker";
 import CommentSection from "@/components/comment-section";
+import { getLoginUser } from "@/app/streams/[id]/actions";
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const post = await getPostByCache(Number(params.id));
@@ -33,6 +34,10 @@ export default async function Post({ params }: { params: { id: string } }) {
   const session = await getSession();
   if (!session) {
     redirect("/login");
+  }
+  const me = await getLoginUser(session.id!);
+  if (!me) {
+    redirect("login");
   }
   const isLike = await getIsLike(session.id!, id);
   const likes = await getLikeByCache(id);
@@ -68,8 +73,8 @@ export default async function Post({ params }: { params: { id: string } }) {
 
         <div className="flex flex-col gap-5">
           <CommentSection
-            username={post?.user.username}
-            avatar={post?.user.avatar ?? ""}
+            username={me.username}
+            avatar={me.avatar ?? ""}
             initialComments={initialComments}
             postId={id}
             userId={session.id!}

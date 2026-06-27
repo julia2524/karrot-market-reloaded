@@ -8,23 +8,25 @@ datasource db {
 }
 
 model User {
-  id         Int        @id @default(autoincrement())
-  email      String?    @unique
-  username   String     @unique
-  password   String?
-  avatar     String?
-  phone      String?    @unique
-  github_id  Int?       @unique
-  created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
-  smstokens  SMStoken[]
-  products   Product[]
-  posts      Post[]
-  comments   Comment[]
-  likes      Like[]
-  messages   Message[]
-  sales      ChatRoom[] @relation("seller")
-  purchases  ChatRoom[] @relation("buyer")
+  id           Int           @id @default(autoincrement())
+  email        String?       @unique
+  username     String        @unique
+  password     String?
+  avatar       String?
+  phone        String?       @unique
+  github_id    Int?          @unique
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+  smstokens    SMStoken[]
+  products     Product[]
+  posts        Post[]
+  comments     Comment[]
+  likes        Like[]
+  messages     Message[]
+  sales        ChatRoom[]    @relation("seller")
+  purchases    ChatRoom[]    @relation("buyer")
+  streamings   Streaming[]
+  liveComments LiveComment[]
 }
 
 model SMStoken {
@@ -105,4 +107,26 @@ model Message {
   user       User     @relation(fields: [userId], references: [id])
   userId     Int
   created_at DateTime @default(now())
+}
+
+model Streaming {
+  id           Int           @id @default(autoincrement())
+  title        String
+  stream_key   String
+  stream_id    String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       Int
+  created_at   DateTime      @default(now())
+  liveComments LiveComment[]
+}
+
+model LiveComment {
+  id          Int       @id @default(autoincrement())
+  payload     String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  streaming   Streaming @relation(fields: [streamingId], references: [id], onDelete: Cascade)
+  userId      Int
+  streamingId Int
 }
